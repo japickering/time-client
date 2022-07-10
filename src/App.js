@@ -12,30 +12,31 @@ export default function App() {
     return moment(date).format('HH:mm:ss');
   };
 
-  const fetchAPI = () => {
-    fetch('http://localhost:4000/time')
-      .then((response) => {
-        return response.json;
-      })
-      .then((data) => {
-        setloading(false);
-        return data;
-      })
-      .catch((err) => {
-        setloading(false);
-        console.log(err);
-      });
-  };
-
-  // TODO: 
+  // TODO:
   useEffect(() => {
-    const data = fetchAPI();
-    setServerTime(formatTime(data));
-    setClientTime(formatTime(Date.now()));
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('dev mode!');
 
-    setInterval(() => {
-      setClientTime(formatTime(Date.now()));
-    }, 1000);
+      fetch('http://localhost:4000/time')
+        .then((response) => {
+          return response.json;
+        })
+        .then((data) => {
+          setloading(false);
+          setServerTime(formatTime(data));
+          setClientTime(formatTime(Date.now()));
+
+          setInterval(() => {
+            setClientTime(formatTime(Date.now()));
+          }, 1000);
+        })
+        .catch((err) => {
+          setloading(false);
+          console.log(err);
+        });
+    } else {
+      console.log('not enabled for production');
+    }
   }, []);
 
   return (

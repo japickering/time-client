@@ -1,4 +1,8 @@
-# Time Client Specification
+# Time Client
+
+API dev server must be running locally and the client pointing to local server path on port 4000 to make API requests.
+
+### Time Client Specification
 
 The frontend application requires one page, split into two sections horizontally.
 On the left-hand side of the application, display:
