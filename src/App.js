@@ -3,40 +3,47 @@ import moment from 'moment';
 import './App.css';
 
 export default function App() {
-  const [loading, setloading] = useState(true);
+  const [loadingTimes, setloadingTimes] = useState(true);
+  const [loadingMetrics, setloadingMetrics] = useState(true);
   const [serverTime, setServerTime] = useState('00:00:00');
   const [clientTime, setClientTime] = useState('00:00:00');
-  // const [timeDifference, setTimeDifference] = useState('');
+  // const [timeDiff, setTimeDiff] = useState('');
 
   const formatTime = (date) => {
     return moment(date).format('HH:mm:ss');
   };
 
-  // TODO:
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('dev mode!');
+    fetch('http://localhost:4000/time')
+      .then((response) => {
+        return response.json;
+      })
+      .then((data) => {
+        setloadingTimes(false);
+        setServerTime(formatTime(data));
+        setClientTime(formatTime(Date.now()));
 
-      fetch('http://localhost:4000/time')
-        .then((response) => {
-          return response.json;
-        })
-        .then((data) => {
-          setloading(false);
-          setServerTime(formatTime(data));
+        setInterval(() => {
           setClientTime(formatTime(Date.now()));
+        }, 1000);
+      })
+      .catch((err) => {
+        setloadingTimes(false);
+        console.log(err);
+      });
 
-          setInterval(() => {
-            setClientTime(formatTime(Date.now()));
-          }, 1000);
-        })
-        .catch((err) => {
-          setloading(false);
-          console.log(err);
-        });
-    } else {
-      console.log('not enabled for production');
-    }
+    fetch('http://localhost:4000/metrics')
+      .then((response) => {
+        return response.json;
+      })
+      .then((data) => {
+        console.log(data);
+        setloadingMetrics(false);
+      })
+      .catch((err) => {
+        setloadingMetrics(false);
+        console.log(err);
+      });
   }, []);
 
   return (
@@ -45,7 +52,7 @@ export default function App() {
         <h1>Time Machine</h1>
       </header>
       <main>
-        <p>{loading ? <span>loading...</span> : <></>}</p>
+        <p>{loadingTimes ? <span>loading...</span> : <></>}</p>
         <div className='split left'>
           <p>
             Server Time: <code>{serverTime}</code> (last fetched)
@@ -57,9 +64,7 @@ export default function App() {
             Diff Time: <code>{timeDiff}</code>
           </p> */}
         </div>
-        <div className='split metrics'>
-          <h3>Metrics</h3>
-        </div>
+        <div className='split metrics'>{loadingMetrics ? <h3>loading...</h3> : <h3>Metrics</h3>}</div>
       </main>
     </div>
   );
