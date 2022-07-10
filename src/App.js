@@ -1,25 +1,36 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import './App.css';
 
-function App() {
+export default function App() {
+  const [serverTime, setServerTime] = useState('HH:mm:ss');
+
+  const formatTime = (date) => {
+    return moment(date).format('HH:mm:ss');
+  };
+
+  useEffect(() => {
+    const data = fetchServerTime();
+    console.log(formatTime(data));
+    setServerTime(formatTime(data));
+  }, []);
+
+  const fetchServerTime = async () => {
+    fetch('http://localhost:4000/time/')
+      .then((response) => {
+        return response.json;
+      })
+      .then((data) => {
+        return data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <header className='App-header'>Server Time (HH:mm:ss): {serverTime}</header>
     </div>
   );
 }
-
-export default App;

@@ -1,70 +1,18 @@
-# Getting Started with Create React App
+# Server Time Client Specification
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The frontend application requires one page, split into two sections horizontally.
+On the left-hand side of the application, display:
+- The most recently-fetched value for server time (retrieved by hitting endpoint /time),
+displayed in epoch seconds.
+- The difference between current client machine time and the most recently-fetched value for server time in epoch seconds, formatted in stopwatch format (i.e. HH:mm:ss; a difference of 32 seconds would be 00:00:32, a difference of 0 seconds would be 00:00:00).
+- The displayed difference should update once per second. Eg. An initial difference of 00:00:00 would change after one second to 00:00:01.
 
-## Available Scripts
+On the right-hand side of the application, display:
+- A HTML preformatted code block containing the most recently-fetched value of all Prometheus metrics (retrieved by hitting endpoint /metrics).
 
-In the project directory, you can run:
+On loading the application for the first time, begin an API request to endpoints /time and /metrics to load current data values. 
+Every 30 seconds, the frontend application should make API requests to endpoints /time and /metrics to load the latest data.
 
-### `yarn start`
+While a network request is occurring, the relevant half of the screen should indicate this (eg. a div covering it entirely with text ‘Loading’, or a spinner of some kind below the content).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+All API requests made by the frontend should include header ‘Authorization’ with value ‘mysecrettoken’ to ensure requests do not receive a 403 response.
