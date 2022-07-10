@@ -3,12 +3,35 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
+  position: relative;
+  min-height: 10vh;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  background-color: #282c34;
   color: white;
+  overflow-x: hidden;
+}
+
+main {
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  color: #234;
+  overflow-x: hidden;
+}
+
+.split {
+  margin: 10px;
+  width: 50%;
+  min-height: 90vh;
+  text-align: left;
+}
+
+.split.left {
+  border-right: 1px solid whitesmoke;
 }
