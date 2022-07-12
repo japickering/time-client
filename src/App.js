@@ -7,6 +7,7 @@ export default function App() {
   const [loadingMetrics, setloadingMetrics] = useState(true);
   const [serverTime, setServerTime] = useState('00:00:00');
   const [clientTime, setClientTime] = useState('00:00:00');
+  const [metrics, setMetrics] = useState('');
   // const [timeDiff, setTimeDiff] = useState('');
 
   const formatTime = (date) => {
@@ -20,7 +21,7 @@ export default function App() {
       })
       .then((data) => {
         setloadingTimes(false);
-        setServerTime(formatTime(data));
+        setServerTime(formatTime(data.time));
         setClientTime(formatTime(Date.now()));
 
         setInterval(() => {
@@ -37,12 +38,13 @@ export default function App() {
         return response.json;
       })
       .then((data) => {
-        console.log(data);
+        console.log(data.message);
+        setMetrics(data.message);
         setloadingMetrics(false);
       })
       .catch((err) => {
         setloadingMetrics(false);
-        console.log(err);
+        //   console.log(err);
       });
   }, []);
 
@@ -64,7 +66,7 @@ export default function App() {
             Diff Time: <code>{timeDiff}</code>
           </p> */}
         </div>
-        <div className='split metrics'>{loadingMetrics ? <h3>loading...</h3> : <h3>Metrics</h3>}</div>
+        <div className='split metrics'>{loadingMetrics ? <h3>loading metrics...</h3> : <h3>{metrics}</h3>}</div>
       </main>
     </div>
   );
