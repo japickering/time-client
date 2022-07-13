@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import './App.css';
 
+const token = 'mysecrettoken';
+
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const [loadingMetrics, setloadingMetrics] = useState(true);
   const [serverTime, setServerTime] = useState('00:00:00');
   const [clientTime, setClientTime] = useState('00:00:00');
   //   const [timeDiff, setTimeDiff] = useState('00:00:00');
-  const [metrics, setMetrics] = useState('');
+  const [metrics, setMetrics] = useState('loading');
 
   useEffect(() => {
-    fetch('http://localhost:4000/time')
+    fetch('http://localhost:4000/time', { method: 'GET', authorization: token })
       .then((response) => {
         return response.json;
       })
@@ -36,17 +37,15 @@ export default function App() {
         console.log(err.response);
       });
 
-    fetch('http://localhost:4000/metrics')
+    fetch('http://localhost:4000/metrics', { method: 'GET', authorization: token })
       .then((response) => {
         return response.json;
       })
       .then((data) => {
         console.log('data', data);
         setMetrics(data.message);
-        setloadingMetrics(false);
       })
       .catch((err) => {
-        setloadingMetrics(false);
         console.log(err.response);
       });
   }, []);
@@ -69,7 +68,7 @@ export default function App() {
             Diff Time: <code>{timeDiff}</code>
           </p> */}
         </div>
-        <div className='split metrics'>{loadingMetrics ? <h3>loading metrics...</h3> : <p>{metrics}</p>}</div>
+        <div className='split metrics'>{metrics}</div>
       </main>
     </div>
   );
