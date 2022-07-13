@@ -3,16 +3,12 @@ import moment from 'moment';
 import './App.css';
 
 export default function App() {
-  const [loadingTimes, setloadingTimes] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [loadingMetrics, setloadingMetrics] = useState(true);
   const [serverTime, setServerTime] = useState('00:00:00');
   const [clientTime, setClientTime] = useState('00:00:00');
+  //   const [timeDiff, setTimeDiff] = useState('00:00:00');
   const [metrics, setMetrics] = useState('');
-  // const [timeDiff, setTimeDiff] = useState('');
-
-  const formatTime = (date) => {
-    return moment(date).format('HH:mm:ss');
-  };
 
   useEffect(() => {
     fetch('http://localhost:4000/time')
@@ -20,17 +16,24 @@ export default function App() {
         return response.json;
       })
       .then((data) => {
-        setloadingTimes(false);
-        setServerTime(formatTime(data.time));
-        setClientTime(formatTime(Date.now()));
+        setLoading(false);
+        const prev = moment(data.time).format('HH:mm:ss');
+        setServerTime(prev);
 
         setInterval(() => {
-          setClientTime(formatTime(Date.now()));
+          const now = moment(Date.now()).format('HH:mm:ss');
+
+          // BUG: diff() not working despite Stack overflow posts
+          //  http://stackoverflow.com/questions/53532750/ddg#53532951
+          // const result = moment(now.diff(prev)).format('HH:mm:ss');
+          // setTimeDiff(result);
+
+          setClientTime(now);
         }, 1000);
       })
       .catch((err) => {
-        setloadingTimes(false);
-        console.log(err);
+        setLoading(false);
+        console.log(err.response);
       });
 
     fetch('http://localhost:4000/metrics')
@@ -38,13 +41,13 @@ export default function App() {
         return response.json;
       })
       .then((data) => {
-        console.log(data.message);
+        console.log('data', data);
         setMetrics(data.message);
         setloadingMetrics(false);
       })
       .catch((err) => {
         setloadingMetrics(false);
-        //   console.log(err);
+        console.log(err.response);
       });
   }, []);
 
@@ -54,10 +57,10 @@ export default function App() {
         <h1>Time Machine</h1>
       </header>
       <main>
-        <p>{loadingTimes ? <span>loading...</span> : <></>}</p>
+        {loading && <div>loading...</div>}
         <div className='split left'>
           <p>
-            Server Time: <code>{serverTime}</code> (last fetched)
+            Server Time: <code>{serverTime}</code>
           </p>
           <p>
             Local Time: <code>{clientTime}</code>
@@ -66,7 +69,7 @@ export default function App() {
             Diff Time: <code>{timeDiff}</code>
           </p> */}
         </div>
-        <div className='split metrics'>{loadingMetrics ? <h3>loading metrics...</h3> : <h3>{metrics}</h3>}</div>
+        <div className='split metrics'>{loadingMetrics ? <h3>loading metrics...</h3> : <p>{metrics}</p>}</div>
       </main>
     </div>
   );
